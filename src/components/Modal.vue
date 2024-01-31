@@ -1,53 +1,25 @@
 <script>
 export default {
   name: "ShowModal",
-  data() {
-    return {
-      isOpen: false,
+  props: {
+    isOpen: {
+      type: Boolean,
+      required: false,
+      default: false,
     }
   },
-  popupController: null,
+  emits: {
+    'close': null,
+    'ok': null
+  },
   methods: {
-    handleEsc(e) {
-      if (e.keyCode === 27) {
-        this.close();
-      }
-    },
     close() {
-      this.$options.popupController.resolve(false);
-      this.isOpen = false;
+      this.$emit('close');
     },
     ok() {
-      this.$options.popupController.resolve(true);
-      this.isOpen = false;
-    },
-    open() {
-      let resolve;
-      let reject;
-
-      const popupPromise = new Promise((ok, fail) => {
-            resolve = ok;
-            reject = fail
-          }
-      );
-
-      this.$options.popupController = {
-        resolve,
-        reject,
-      };
-
-      this.isOpen = true;
-
-
-      return popupPromise;
+      this.$emit('ok');
     },
   },
-  mounted() {
-    document.addEventListener('keydown', this.handleEsc);
-  },
-  unmounted() {
-    document.removeEventListener('keydown', this.handleEsc);
-  }
 }
 </script>
 
@@ -69,7 +41,7 @@ export default {
 
       <slot name="footer" class="modal-footer" :close="close" :ok="ok">
         <h3>Modal Footer</h3>
-        <button id="closeBtn" @click="close" >Close</button>
+        <button id="closeBtn" @click="close">Close</button>
         <button id="okBtn" @click="ok">Ok</button>
       </slot>
     </div>
